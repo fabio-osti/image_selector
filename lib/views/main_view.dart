@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:image_selector/controllers/selector_controller.dart';
 import 'package:image_selector/views/conveyor_view.dart';
 import 'package:image_selector/views/selector_view.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class MainView extends StatelessWidget {
   const MainView({Key? key, required this.title}) : super(key: key);
@@ -10,13 +11,15 @@ class MainView extends StatelessWidget {
   final String title;
 
   chooseFolder() async {
-    String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
+    if (await Permission.storage.request().isGranted) {
+      String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
 
-    if (selectedDirectory == null) {
-      return;
+      if (selectedDirectory == null) {
+        return;
+      }
+
+      SelectorController.setDirectory(selectedDirectory);
     }
-
-    SelectorController.setDirectory(selectedDirectory);
   }
 
   @override
