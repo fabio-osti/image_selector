@@ -1,6 +1,8 @@
 import 'dart:io';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:image_selector/controllers/selector_controller.dart';
+import 'package:photo_view/photo_view.dart';
 
 class SelectorView extends StatefulWidget {
   const SelectorView({super.key});
@@ -31,21 +33,14 @@ class _SelectorViewState extends State<SelectorView> {
       children: [
         Flexible(
           flex: 5,
-          child: Container(
-            margin: const EdgeInsets.all(24),
-            decoration: const BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(20)),
-              color: Color.fromARGB(78, 158, 158, 158),
-            ),
-            child: curImage == null
-                ? Center(
-                    child: Text(
-                      "Please set a folder to start selecting.",
-                      style: Theme.of(context).textTheme.headlineMedium,
-                    ),
-                  )
-                : Image.file(curImage!),
-          ),
+          child: curImage == null
+              ? Center(
+                  child: Text(
+                    "Please set a folder to start selecting.",
+                    style: Theme.of(context).textTheme.headlineMedium,
+                  ),
+                )
+              : PhotoView(imageProvider: FileImage(curImage!)),
         ),
         Flexible(
           child: Padding(
@@ -59,7 +54,10 @@ class _SelectorViewState extends State<SelectorView> {
                 children: [
                   IconButton(
                     icon: const Icon(Icons.cancel_sharp),
-                    iconSize: constraints.maxHeight*0.8,
+                    iconSize: min(
+                      constraints.maxHeight * 0.8,
+                      constraints.maxWidth / 5,
+                    ),
                     onPressed: () =>
                         SelectorController.selectSubjectImageDestination(
                             "Delete"),
@@ -67,7 +65,10 @@ class _SelectorViewState extends State<SelectorView> {
                   ),
                   IconButton(
                     icon: const Icon(Icons.stars_sharp),
-                    iconSize: constraints.maxHeight*0.9,
+                    iconSize: min(
+                      constraints.maxHeight * 0.9,
+                      constraints.maxWidth / 4,
+                    ),
                     onPressed: () =>
                         SelectorController.selectSubjectImageDestination(
                             "Favorite"),
@@ -75,7 +76,10 @@ class _SelectorViewState extends State<SelectorView> {
                   ),
                   IconButton(
                     icon: const Icon(Icons.check_circle_sharp),
-                    iconSize: constraints.maxHeight*0.8,
+                    iconSize: min(
+                      constraints.maxHeight * 0.8,
+                      constraints.maxWidth / 5,
+                    ),
                     onPressed: () =>
                         SelectorController.selectSubjectImageDestination(
                             "Keep"),
