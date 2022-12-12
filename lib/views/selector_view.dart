@@ -120,14 +120,14 @@ class _SelectorViewState extends State<SelectorView> {
   }
 
   void actionSelectKeep() {
-    SelectorController.selectSubjectImageDestination("Keep");
+    SelectorController.selectSubjectImageDestination(SelectorController.keepDestination);
   }
 
   void actionSelectFavorite() {
-    SelectorController.selectSubjectImageDestination("Favorite");
+    SelectorController.selectSubjectImageDestination(SelectorController.favoriteDestination);
   }
 
   void actionSelectDelete() {
-    SelectorController.selectSubjectImageDestination("Delete");
+    SelectorController.selectSubjectImageDestination(SelectorController.deleteDestination);
   }
 }

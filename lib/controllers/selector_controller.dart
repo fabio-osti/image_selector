@@ -4,34 +4,28 @@ import 'package:image_selector/helper/listenable.dart';
 import 'package:path/path.dart' as p;
 
 class SelectorController {
-  // TODO: Add settings menu to change default options folders name
+  static final List<File> _alreadyProcessed = List.empty(growable: true);
   static String keepDestination = "Keep";
   static String favoriteDestination = "Favorite";
   static String deleteDestination = "Delete";
-  static List<String> otherDestinations = List.empty(growable: true);
-  static Directory? selectionDir;
-  static final List<File> _alreadyProcessed = List.empty(growable: true);
+  static Directory? subjectsDir;
   
   static initDestiationDir(String dir) {
-    final optionDir = Directory(p.join(SelectorController.selectionDir!.path, dir));
+    final optionDir = Directory(p.join(SelectorController.subjectsDir!.path, dir));
     optionDir.createSync();
     _alreadyProcessed.addAll(optionDir.listSync().whereType<File>());
   }
 
   static setDirectory(String path) {
-    selectionDir = Directory(path);
+    subjectsDir = Directory(path);
     imageFileQueue.update(
       (q) {
         initDestiationDir(SelectorController.keepDestination);
         initDestiationDir(SelectorController.favoriteDestination);
         initDestiationDir(SelectorController.deleteDestination);
 
-        for (var opt in otherDestinations) {
-          initDestiationDir(opt);
-        }
-
         q.clear();
-        q.addAll(selectionDir!.listSync(recursive: false).whereType<File>().where(
+        q.addAll(subjectsDir!.listSync(recursive: false).whereType<File>().where(
               (element) =>
                   imageExtensions.contains(
                     p.extension(element.path).toLowerCase(),
@@ -57,13 +51,15 @@ class SelectorController {
       imageFileQueue.value[_subjectImageFileIndex.value];
 
   static setSubject(File sbj) {
-    _subjectImageFileIndex.value = imageFileQueue.value.indexOf(sbj);
+    var indexOf = imageFileQueue.value.indexOf(sbj);
+    assert(indexOf != -1);
+    _subjectImageFileIndex.value = indexOf;
   }
 
   static selectSubjectImageDestination(String destination) {
-    if (subjectImageFile != null && selectionDir != null) {
+    if (subjectImageFile != null && subjectsDir != null) {
       var destinationDir = Directory(p.join(
-        selectionDir!.path,
+        subjectsDir!.path,
         destination,
       ));
       subjectImageFile!.copySync(

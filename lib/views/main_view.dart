@@ -1,12 +1,15 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:image_selector/controllers/selector_controller.dart';
+import 'package:image_selector/views/control_panel_view.dart';
 import 'package:image_selector/views/conveyor_view.dart';
 import 'package:image_selector/views/selector_view.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class MainView extends StatelessWidget {
-  const MainView({Key? key,}) : super(key: key);
+  const MainView({
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +19,12 @@ class MainView extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: horizontal ? Colors.transparent : null,
         actions: [
-          IconButton(onPressed: actionChooseFolder, icon: const Icon(Icons.folder)),
+          IconButton(
+            onPressed: () {
+              showControlPanel(context);
+            },
+            icon: const Icon(Icons.settings),
+          ),
         ],
       ),
       body: const SelectorView(),
@@ -26,7 +34,8 @@ class MainView extends StatelessWidget {
     );
   }
 
-  bool isHorizontal(BuildContext context) => MediaQuery.of(context).size.aspectRatio > 1;
+  bool isHorizontal(BuildContext context) =>
+      MediaQuery.of(context).size.aspectRatio > 1;
 
   void actionChooseFolder() async {
     if (await Permission.storage.request().isGranted) {
