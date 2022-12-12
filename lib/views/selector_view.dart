@@ -114,7 +114,6 @@ class _SelectorViewState extends State<SelectorView> {
   OverlayEntry _getOptionsOverlay() {
     return OverlayEntry(builder: (context) {
       final screenSize = MediaQuery.of(context).size;
-      final floatingSize = Theme.of(context).floatingActionButtonTheme.iconSize;
       return Positioned(
         bottom: 0,
         left: 0,
