@@ -19,6 +19,7 @@ dependencies:
   path: ^1.8.2
   permission_handler: ^10.2.0
   photo_view: ^0.14.0
+  flutter_launcher_icons: ^0.11.0
 
 dev_dependencies:
   flutter_test:
@@ -28,3 +29,11 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+flutter_icons:
+  android: true
+  windows: 
+    generate: true
+    icon_size: 256
+  image_path: "image_selector_transparent_256.png" 
+    
