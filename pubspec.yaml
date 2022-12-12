@@ -38,5 +38,5 @@ flutter_icons:
   windows: 
     generate: true
     icon_size: 256
-  image_path: "image_selector_transparent_256.png" 
+  image_path: "image_selector.png" 
     
