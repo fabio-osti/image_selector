@@ -35,9 +35,12 @@ class _SelectorViewState extends State<SelectorView> {
     });
     return curImage == null
         ? Center(
-            child: Text(
-              "Please set a folder to start selecting.",
-              style: Theme.of(context).textTheme.headlineMedium,
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Text(
+                "Please set a folder to start selecting.",
+                style: Theme.of(context).textTheme.headlineMedium,
+              ),
             ),
           )
         : _getViewer();
@@ -126,19 +129,22 @@ class _SelectorViewState extends State<SelectorView> {
                 icon: const Icon(Icons.cancel_sharp),
                 iconSize: min(screenSize.width / 5, screenSize.height / 7),
                 onPressed: actionSelectDelete,
-                color: const Color.fromARGB(198, 138, 0, 0),
+                color: Theme.of(context).iconTheme.color?.withOpacity(0.75),
+                // color: const Color.fromARGB(198, 138, 0, 0),
               ),
               IconButton(
                 icon: const Icon(Icons.stars_sharp),
                 iconSize: min(screenSize.width / 4, screenSize.height / 6),
                 onPressed: actionSelectFavorite,
-                color: const Color.fromARGB(198, 238, 188, 29),
+                color: Theme.of(context).iconTheme.color?.withOpacity(0.75),
+                // color: const Color.fromARGB(198, 238, 188, 29),
               ),
               IconButton(
                 icon: const Icon(Icons.check_circle_sharp),
                 iconSize: min(screenSize.width / 5, screenSize.height / 7),
                 onPressed: actionSelectKeep,
-                color: const Color.fromARGB(198, 0, 138, 0),
+                color: Theme.of(context).iconTheme.color?.withOpacity(0.75),
+                // color: const Color.fromARGB(198, 0, 138, 0),
               ),
             ],
           ),

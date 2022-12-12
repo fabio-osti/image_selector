@@ -20,10 +20,14 @@ class MainView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var horizontal = isHorizontal(context);
+    var appBarHeight = MediaQuery.of(context).size.height/12;
     return Scaffold(
-      extendBodyBehindAppBar: isHorizontal(context),
+      extendBodyBehindAppBar: horizontal,
       appBar: AppBar(
-        backgroundColor: isHorizontal(context) ? Colors.transparent : null,
+        backgroundColor: horizontal ? Colors.transparent : null,
+        iconTheme: horizontal ? IconThemeData(size: appBarHeight) : null,
+        toolbarHeight: horizontal ? appBarHeight : null,
         actions: [
           IconButton(onPressed: actionChooseFolder, icon: const Icon(Icons.folder)),
         ],
