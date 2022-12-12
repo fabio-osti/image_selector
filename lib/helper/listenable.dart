@@ -1,7 +1,7 @@
 typedef Unlisten = Function();
 
-class _Listenable<T> {
-  _Listenable(T obj) : _object = obj;
+abstract class Listenable<T> {
+  Listenable(T obj) : _object = obj;
 
   update(Function(T) fn) {
     fn(_object);
@@ -29,11 +29,11 @@ class _Listenable<T> {
   }
 }
 
-class ImutableListenable<T> extends _Listenable<T> {
+class ImutableListenable<T> extends Listenable<T> {
   ImutableListenable(T obj) : super(obj);
 }
 
-class MutableListenable<T> extends _Listenable<T> {
+class MutableListenable<T> extends Listenable<T> {
   MutableListenable(T obj) : super(obj);
 
   void set(T obj) {

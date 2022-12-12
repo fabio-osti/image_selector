@@ -4,6 +4,7 @@ import 'package:image_selector/helper/listenable.dart';
 import 'package:path/path.dart' as p;
 
 class SelectorController {
+  // TODO: Add settings menu to change default options folders name
   static String keepDestination = "Keep";
   static String favoriteDestination = "Favorite";
   static String deleteDestination = "Delete";

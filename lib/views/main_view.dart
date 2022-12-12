@@ -10,15 +10,13 @@ class MainView extends StatelessWidget {
 
   final String title;
 
-  chooseFolder() async {
+  void actionChooseFolder() async {
     if (await Permission.storage.request().isGranted) {
       String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
 
-      if (selectedDirectory == null) {
-        return;
+      if (selectedDirectory != null) {
+        SelectorController.setDirectory(selectedDirectory);
       }
-
-      SelectorController.setDirectory(selectedDirectory);
     }
   }
 
@@ -28,7 +26,7 @@ class MainView extends StatelessWidget {
       appBar: AppBar(
         title: Text(title),
         actions: [
-          IconButton(onPressed: chooseFolder, icon: const Icon(Icons.folder)),
+          IconButton(onPressed: actionChooseFolder, icon: const Icon(Icons.folder)),
         ],
       ),
       body: const SelectorView(),

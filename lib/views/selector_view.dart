@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'dart:math';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_selector/controllers/selector_controller.dart';
 import 'package:photo_view/photo_view.dart';
 
@@ -12,19 +14,13 @@ class SelectorView extends StatefulWidget {
 }
 
 class _SelectorViewState extends State<SelectorView> {
-  File? curImage;
-
-  OverlayEntry? _overlayEntry;
-
-  updateImage() {
-    setState(() {
-      curImage = SelectorController.subjectImageFile;
-    });
-  }
-
   @override
   void initState() {
-    SelectorController.listenSubjectChanged(updateImage);
+    SelectorController.listenSubjectChanged(() {
+      setState(() {
+        curImage = SelectorController.subjectImageFile;
+      });
+    });
     _overlayEntry = _getOptionsOverlay();
     super.initState();
   }
@@ -48,6 +44,7 @@ class _SelectorViewState extends State<SelectorView> {
   }
 
   Widget _getOptionsWidget() {
+    // TODO: Add seetings menu to toggle between overlay and widget buttons
     return Flexible(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -64,8 +61,7 @@ class _SelectorViewState extends State<SelectorView> {
                   constraints.maxHeight * 0.8,
                   constraints.maxWidth / 5,
                 ),
-                onPressed: () =>
-                    SelectorController.selectSubjectImageDestination("Delete"),
+                onPressed: actionSelectDelete,
                 color: const Color.fromARGB(255, 138, 0, 0),
               ),
               IconButton(
@@ -74,9 +70,7 @@ class _SelectorViewState extends State<SelectorView> {
                   constraints.maxHeight * 0.9,
                   constraints.maxWidth / 4,
                 ),
-                onPressed: () =>
-                    SelectorController.selectSubjectImageDestination(
-                        "Favorite"),
+                onPressed: actionSelectFavorite,
                 color: const Color.fromARGB(255, 238, 188, 29),
               ),
               IconButton(
@@ -85,8 +79,7 @@ class _SelectorViewState extends State<SelectorView> {
                   constraints.maxHeight * 0.8,
                   constraints.maxWidth / 5,
                 ),
-                onPressed: () =>
-                    SelectorController.selectSubjectImageDestination("Keep"),
+                onPressed: actionSelectKeep,
                 color: const Color.fromARGB(255, 0, 138, 0),
               ),
             ],
@@ -113,29 +106,37 @@ class _SelectorViewState extends State<SelectorView> {
               IconButton(
                 icon: const Icon(Icons.cancel_sharp),
                 iconSize: min(screenSize.width / 5, screenSize.height / 7),
-                onPressed: () =>
-                    SelectorController.selectSubjectImageDestination("Delete"),
-                color: const Color.fromARGB(255, 138, 0, 0),
+                onPressed: actionSelectDelete,
+                color: const Color.fromARGB(198, 138, 0, 0),
               ),
               IconButton(
                 icon: const Icon(Icons.stars_sharp),
                 iconSize: min(screenSize.width / 4, screenSize.height / 6),
-                onPressed: () =>
-                    SelectorController.selectSubjectImageDestination(
-                        "Favorite"),
-                color: const Color.fromARGB(255, 238, 188, 29),
+                onPressed: actionSelectFavorite,
+                color: const Color.fromARGB(198, 238, 188, 29),
               ),
               IconButton(
                 icon: const Icon(Icons.check_circle_sharp),
                 iconSize: min(screenSize.width / 5, screenSize.height / 7),
-                onPressed: () =>
-                    SelectorController.selectSubjectImageDestination("Keep"),
-                color: const Color.fromARGB(255, 0, 138, 0),
+                onPressed: actionSelectKeep,
+                color: const Color.fromARGB(198, 0, 138, 0),
               ),
             ],
           ),
         ),
       );
     });
+  }
+
+  void actionSelectKeep() {
+    SelectorController.selectSubjectImageDestination("Keep");
+  }
+
+  void actionSelectFavorite() {
+    SelectorController.selectSubjectImageDestination("Favorite");
+  }
+
+  void actionSelectDelete() {
+    SelectorController.selectSubjectImageDestination("Delete");
   }
 }

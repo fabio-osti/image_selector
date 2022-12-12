@@ -26,17 +26,15 @@ class _ConveyorViewState extends State<ConveyorView> {
     }).toList();
   }
 
-  update() {
-    setState(
-      () {},
-    );
-  }
-
   Unlisten? unlisten;
 
   @override
   void initState() {
-    unlisten = SelectorController.listenQueueChanged(update);
+    unlisten = SelectorController.listenQueueChanged(() {
+      setState(
+        () {},
+      );
+    });
     super.initState();
   }
 
