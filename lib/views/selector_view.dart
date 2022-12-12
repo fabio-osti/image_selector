@@ -65,52 +65,6 @@ class _SelectorViewState extends State<SelectorView> {
   File? curImage;
   OverlayEntry? _overlayEntry;
 
-  Widget _getOptionsWidget() {
-    // TODO: Add seetings menu to toggle between overlay and widget buttons
-    return Flexible(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: LayoutBuilder(
-          builder: (context, constraints) => Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            verticalDirection: VerticalDirection.down,
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              IconButton(
-                icon: const Icon(Icons.cancel_sharp),
-                iconSize: min(
-                  constraints.maxHeight * 0.8,
-                  constraints.maxWidth / 5,
-                ),
-                onPressed: actionSelectDelete,
-                color: Theme.of(context).iconTheme.color?.withOpacity(0.75),
-              ),
-              IconButton(
-                icon: const Icon(Icons.stars_sharp),
-                iconSize: min(
-                  constraints.maxHeight * 0.9,
-                  constraints.maxWidth / 4,
-                ),
-                onPressed: actionSelectFavorite,
-                color: Theme.of(context).iconTheme.color?.withOpacity(0.75),
-              ),
-              IconButton(
-                icon: const Icon(Icons.check_circle_sharp),
-                iconSize: min(
-                  constraints.maxHeight * 0.8,
-                  constraints.maxWidth / 5,
-                ),
-                onPressed: actionSelectKeep,
-                color: Theme.of(context).iconTheme.color?.withOpacity(0.75),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
   OverlayEntry _getOptionsOverlay() {
     return OverlayEntry(builder: (context) {
       final screenSize = MediaQuery.of(context).size;
