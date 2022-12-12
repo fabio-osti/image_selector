@@ -1,5 +1,5 @@
 name: image_selector
-description: A new Flutter project.
+description: An app to choose which image to keep, favorite or delete. 
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
@@ -24,11 +24,14 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
+  flutter_app_name: ^0.1.0
   flutter_lints: ^2.0.0
 
 flutter:
   uses-material-design: true
+
+flutter_app_name:
+  name: "Image Selector"
 
 flutter_icons:
   android: true
