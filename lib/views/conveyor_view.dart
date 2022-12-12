@@ -38,7 +38,7 @@ class _ConveyorBox extends StatefulWidget {
 }
 
 class _ConveyorBoxState extends State<_ConveyorBox> {
-  FocusNode? _focusNode;
+  late final FocusNode _focusNode;
 
   @override
   void initState() {
@@ -48,7 +48,7 @@ class _ConveyorBoxState extends State<_ConveyorBox> {
 
   @override
   void dispose() {
-    _focusNode!.dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 
@@ -63,7 +63,7 @@ class _ConveyorBoxState extends State<_ConveyorBox> {
         ),
         onPressed: () {
           SelectorController.setSubject(widget.imgFile);
-          _focusNode!.requestFocus();
+          _focusNode.requestFocus();
         },
         child: Image.file(widget.imgFile),
       ),

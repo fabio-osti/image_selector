@@ -4,6 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_selector/controllers/selector_controller.dart';
+import 'package:image_selector/helper/listenable.dart';
 import 'package:photo_view/photo_view.dart';
 
 class SelectorView extends StatefulWidget {
@@ -14,15 +15,27 @@ class SelectorView extends StatefulWidget {
 }
 
 class _SelectorViewState extends State<SelectorView> {
+  late final Unlisten _unlistenSubjectChanged;
+  late final PhotoViewController _photoController;
+  late final OverlayEntry? _overlayEntry;
+
   @override
   void initState() {
-    SelectorController.listenSubjectChanged(() {
+    _photoController =  PhotoViewController();
+    _unlistenSubjectChanged = SelectorController.listenSubjectChanged(() {
       setState(() {
         curImage = SelectorController.subjectImageFile;
       });
     });
     _overlayEntry = _getOptionsOverlay();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _unlistenSubjectChanged();
+    _photoController.dispose();
+    super.dispose();
   }
 
   @override
@@ -45,7 +58,9 @@ class _SelectorViewState extends State<SelectorView> {
           )
         : _getViewer();
   }
-  final PhotoViewController _photoController = PhotoViewController();
+  
+  File? curImage;
+
   Widget _getViewer() {
     return Listener(
       onPointerSignal: (event) {
@@ -61,9 +76,6 @@ class _SelectorViewState extends State<SelectorView> {
       ),
     );
   }
-
-  File? curImage;
-  OverlayEntry? _overlayEntry;
 
   OverlayEntry _getOptionsOverlay() {
     return OverlayEntry(builder: (context) {

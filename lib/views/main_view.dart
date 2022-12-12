@@ -8,16 +8,6 @@ import 'package:permission_handler/permission_handler.dart';
 class MainView extends StatelessWidget {
   const MainView({Key? key,}) : super(key: key);
 
-  void actionChooseFolder() async {
-    if (await Permission.storage.request().isGranted) {
-      String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
-
-      if (selectedDirectory != null) {
-        SelectorController.setDirectory(selectedDirectory);
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     var horizontal = isHorizontal(context);
@@ -37,4 +27,14 @@ class MainView extends StatelessWidget {
   }
 
   bool isHorizontal(BuildContext context) => MediaQuery.of(context).size.aspectRatio > 1;
+
+  void actionChooseFolder() async {
+    if (await Permission.storage.request().isGranted) {
+      String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
+
+      if (selectedDirectory != null) {
+        SelectorController.setDirectory(selectedDirectory);
+      }
+    }
+  }
 }
