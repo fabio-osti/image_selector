@@ -6,9 +6,7 @@ import 'package:image_selector/views/selector_view.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class MainView extends StatelessWidget {
-  const MainView({Key? key, required this.title}) : super(key: key);
-
-  final String title;
+  const MainView({Key? key,}) : super(key: key);
 
   void actionChooseFolder() async {
     if (await Permission.storage.request().isGranted) {

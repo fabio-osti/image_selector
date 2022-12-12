@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 34, 137, 47), brightness: Brightness.dark),
         useMaterial3: true
       ),
-      home: const MainView(title: 'Selector'),
+      home: const MainView(),
     );
   }
 }
