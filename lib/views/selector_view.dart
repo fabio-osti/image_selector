@@ -40,8 +40,27 @@ class _SelectorViewState extends State<SelectorView> {
               style: Theme.of(context).textTheme.headlineMedium,
             ),
           )
-        : PhotoView(imageProvider: FileImage(curImage!));
+        : _getViewer();
   }
+  final PhotoViewController _photoController = PhotoViewController();
+  Widget _getViewer() {
+    return Listener(
+      onPointerSignal: (event) {
+        if (event is PointerScrollEvent &&
+            RawKeyboard.instance.keysPressed
+                .contains(LogicalKeyboardKey.controlLeft)) {
+          _photoController.scale = (_photoController.scale ?? 1) - event.scrollDelta.dy / 200; 
+        }
+      },
+      child: PhotoView(
+        imageProvider: FileImage(curImage!),
+        controller: _photoController,
+      ),
+    );
+  }
+
+  File? curImage;
+  OverlayEntry? _overlayEntry;
 
   Widget _getOptionsWidget() {
     // TODO: Add seetings menu to toggle between overlay and widget buttons
