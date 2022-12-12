@@ -23,8 +23,9 @@ class MainView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: isHorizontal(context),
       appBar: AppBar(
-        title: Text(title),
+        backgroundColor: isHorizontal(context) ? Colors.transparent : null,
         actions: [
           IconButton(onPressed: actionChooseFolder, icon: const Icon(Icons.folder)),
         ],
@@ -35,4 +36,6 @@ class MainView extends StatelessWidget {
       ),
     );
   }
+
+  bool isHorizontal(BuildContext context) => MediaQuery.of(context).size.aspectRatio > 1;
 }
