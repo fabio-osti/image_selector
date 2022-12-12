@@ -13,11 +13,11 @@ class ConveyorView extends StatelessWidget {
         SliverList(
           delegate: SliverChildBuilderDelegate(
             (context, index) {
-              File imgFile = SelectorController.imageFileQueue.get()[index];
+              File imgFile = SelectorController.imageFileQueue.value[index];
               return _ConveyorBox(imgFile: imgFile);
             },
             addAutomaticKeepAlives: false,
-            childCount: SelectorController.imageFileQueue.get().length,
+            childCount: SelectorController.imageFileQueue.value.length,
           ),
         )
       ],

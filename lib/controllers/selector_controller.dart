@@ -44,7 +44,7 @@ class SelectorController {
             ));
       },
     );
-    _subjectImageFileIndex.set(0);
+    _subjectImageFileIndex.value = 0;
   }
 
   static final ImutableListenable<List<File>> imageFileQueue =
@@ -54,10 +54,10 @@ class SelectorController {
       MutableListenable<int>(0);
 
   static File? get subjectImageFile =>
-      imageFileQueue.get()[_subjectImageFileIndex.get()];
+      imageFileQueue.value[_subjectImageFileIndex.value];
 
   static setSubject(File sbj) {
-    _subjectImageFileIndex.set(imageFileQueue.get().indexOf(sbj));
+    _subjectImageFileIndex.value = imageFileQueue.value.indexOf(sbj);
   }
 
   static selectSubjectImageDestination(String destination) {
@@ -70,9 +70,9 @@ class SelectorController {
         p.join(destinationDir.path, p.basename(subjectImageFile!.path)),
       );
       final nextIndex =
-          min(_subjectImageFileIndex.get(), imageFileQueue.get().length - 2);
-      imageFileQueue.get().removeAt(_subjectImageFileIndex.get());
-      _subjectImageFileIndex.set(nextIndex);
+          min(_subjectImageFileIndex.value, imageFileQueue.value.length - 2);
+      imageFileQueue.value.removeAt(_subjectImageFileIndex.value);
+      _subjectImageFileIndex.value = nextIndex;
     }
   }
 

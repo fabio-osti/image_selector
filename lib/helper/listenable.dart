@@ -1,17 +1,16 @@
 typedef Unlisten = Function();
 
 abstract class Listenable<T> {
-  Listenable(T obj) : _object = obj;
+  Listenable(this._value);
 
   update(Function(T) fn) {
-    fn(_object);
+    fn(_value);
     _sing();
   }
 
-  T _object;
-  T get() => _object;
+  T _value;
   
-  int key = 0;
+  int _nextListenerKey = 0;
   final Map<int, Function()> _listeners = {};
 
   _sing() {
@@ -21,7 +20,11 @@ abstract class Listenable<T> {
   }
 
   Unlisten listen(Function() listener) {
-    final listenerKey = key++;
+    var listenerKey = _nextListenerKey;
+    while(_listeners.containsKey(listenerKey)) {
+      listenerKey = _nextListenerKey++;
+    }
+    
     _listeners[listenerKey] = listener;
     return () {
       _listeners.remove(listenerKey);
@@ -31,13 +34,16 @@ abstract class Listenable<T> {
 
 class ImutableListenable<T> extends Listenable<T> {
   ImutableListenable(T obj) : super(obj);
+
+  T get value => _value;
 }
 
 class MutableListenable<T> extends Listenable<T> {
   MutableListenable(T obj) : super(obj);
 
-  void set(T obj) {
-    super._object = obj;
+  T get value => _value;
+  set value(T obj) {
+    super._value = obj;
     super._sing();
   }
 }
