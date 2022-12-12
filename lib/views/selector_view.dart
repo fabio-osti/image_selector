@@ -84,7 +84,7 @@ class _SelectorViewState extends State<SelectorView> {
                   constraints.maxWidth / 5,
                 ),
                 onPressed: actionSelectDelete,
-                color: const Color.fromARGB(255, 138, 0, 0),
+                color: Theme.of(context).iconTheme.color?.withOpacity(0.75),
               ),
               IconButton(
                 icon: const Icon(Icons.stars_sharp),
@@ -93,7 +93,7 @@ class _SelectorViewState extends State<SelectorView> {
                   constraints.maxWidth / 4,
                 ),
                 onPressed: actionSelectFavorite,
-                color: const Color.fromARGB(255, 238, 188, 29),
+                color: Theme.of(context).iconTheme.color?.withOpacity(0.75),
               ),
               IconButton(
                 icon: const Icon(Icons.check_circle_sharp),
@@ -102,7 +102,7 @@ class _SelectorViewState extends State<SelectorView> {
                   constraints.maxWidth / 5,
                 ),
                 onPressed: actionSelectKeep,
-                color: const Color.fromARGB(255, 0, 138, 0),
+                color: Theme.of(context).iconTheme.color?.withOpacity(0.75),
               ),
             ],
           ),
@@ -114,6 +114,7 @@ class _SelectorViewState extends State<SelectorView> {
   OverlayEntry _getOptionsOverlay() {
     return OverlayEntry(builder: (context) {
       final screenSize = MediaQuery.of(context).size;
+      final floatingSize = Theme.of(context).floatingActionButtonTheme.iconSize;
       return Positioned(
         bottom: 0,
         left: 0,
@@ -127,21 +128,21 @@ class _SelectorViewState extends State<SelectorView> {
             children: [
               IconButton(
                 icon: const Icon(Icons.cancel_sharp),
-                iconSize: min(screenSize.width / 5, screenSize.height / 7),
+                iconSize: min(screenSize.width / 5, screenSize.height / 10),
                 onPressed: actionSelectDelete,
                 color: Theme.of(context).iconTheme.color?.withOpacity(0.75),
                 // color: const Color.fromARGB(198, 138, 0, 0),
               ),
               IconButton(
                 icon: const Icon(Icons.stars_sharp),
-                iconSize: min(screenSize.width / 4, screenSize.height / 6),
+                iconSize: min(screenSize.width / 4, screenSize.height / 8),
                 onPressed: actionSelectFavorite,
                 color: Theme.of(context).iconTheme.color?.withOpacity(0.75),
                 // color: const Color.fromARGB(198, 238, 188, 29),
               ),
               IconButton(
                 icon: const Icon(Icons.check_circle_sharp),
-                iconSize: min(screenSize.width / 5, screenSize.height / 7),
+                iconSize: min(screenSize.width / 5, screenSize.height / 10),
                 onPressed: actionSelectKeep,
                 color: Theme.of(context).iconTheme.color?.withOpacity(0.75),
                 // color: const Color.fromARGB(198, 0, 138, 0),
