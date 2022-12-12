@@ -15,11 +15,12 @@ class MyApp extends StatelessWidget {
       title: 'Image Selector',
       debugShowCheckedModeBanner: false,
       theme: ThemeData.from(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 34, 137, 47), brightness: Brightness.dark),
-        useMaterial3: true
-      ),
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color.fromARGB(255, 34, 137, 47),
+            brightness: Brightness.dark,
+          ),
+          useMaterial3: true),
       home: const MainView(),
     );
   }
 }
-

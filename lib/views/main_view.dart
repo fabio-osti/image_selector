@@ -1,10 +1,7 @@
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:image_selector/controllers/selector_controller.dart';
 import 'package:image_selector/views/control_panel_view.dart';
 import 'package:image_selector/views/conveyor_view.dart';
 import 'package:image_selector/views/selector_view.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class MainView extends StatelessWidget {
   const MainView({
@@ -13,11 +10,10 @@ class MainView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var horizontal = isHorizontal(context);
     return Scaffold(
-      extendBodyBehindAppBar: horizontal,
       appBar: AppBar(
-        backgroundColor: horizontal ? Colors.transparent : null,
+        backgroundColor:Colors.transparent,
+        elevation: 0,
         actions: [
           IconButton(
             onPressed: () {
@@ -32,18 +28,5 @@ class MainView extends StatelessWidget {
         child: ConveyorView(),
       ),
     );
-  }
-
-  bool isHorizontal(BuildContext context) =>
-      MediaQuery.of(context).size.aspectRatio > 1;
-
-  void actionChooseFolder() async {
-    if (await Permission.storage.request().isGranted) {
-      String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
-
-      if (selectedDirectory != null) {
-        SelectorController.setDirectory(selectedDirectory);
-      }
-    }
   }
 }

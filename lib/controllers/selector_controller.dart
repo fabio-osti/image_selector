@@ -17,6 +17,7 @@ class SelectorController {
   }
 
   static setDirectory(String path) {
+    if (path.isEmpty) return;
     subjectsDir = Directory(path);
     imageFileQueue.update(
       (q) {

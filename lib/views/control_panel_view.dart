@@ -16,35 +16,37 @@ showControlPanel(BuildContext context) {
     context: context,
     builder: (buildContext) => AlertDialog(
       title: const Text("Control Panel"),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          TextField(
-            decoration: InputDecoration(
-              label: const Text("Selection directory"),
-              suffixIcon: IconButton(
-                onPressed: () {
-                  _chooseFolder(selectionDirectoryTxtCtrl);
-                },
-                icon: const Icon(Icons.folder),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              decoration: InputDecoration(
+                label: const Text("Selection directory"),
+                suffixIcon: IconButton(
+                  onPressed: () {
+                    _chooseFolder(selectionDirectoryTxtCtrl);
+                  },
+                  icon: const Icon(Icons.folder),
+                ),
               ),
+              controller: selectionDirectoryTxtCtrl,
+              readOnly: true,
             ),
-            controller: selectionDirectoryTxtCtrl,
-            readOnly: true,
-          ),
-          TextField(
-            decoration: const InputDecoration(label: Text("Keep folder name")),
-            controller: keepFolderTxtCtrl,
-          ),
-          TextField(
-            decoration: const InputDecoration(label: Text("Favorite folder name")),
-            controller: favoriteFolderTxtCtrl,
-          ),
-          TextField(
-            decoration: const InputDecoration(label: Text("Delete folder name")),
-            controller: deleteFolderTxtCtrl,
-          ),
-        ],
+            TextField(
+              decoration: const InputDecoration(label: Text("Keep folder name")),
+              controller: keepFolderTxtCtrl,
+            ),
+            TextField(
+              decoration: const InputDecoration(label: Text("Favorite folder name")),
+              controller: favoriteFolderTxtCtrl,
+            ),
+            TextField(
+              decoration: const InputDecoration(label: Text("Delete folder name")),
+              controller: deleteFolderTxtCtrl,
+            ),
+          ],
+        ),
       ),
       actions: [
         ElevatedButton(
