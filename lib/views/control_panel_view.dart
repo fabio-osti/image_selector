@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_selector/controllers/selector_controller.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -14,7 +17,9 @@ showControlPanel(BuildContext context) {
       TextEditingController(text: SelectorController.deleteDestination);
   showDialog(
     context: context,
-    builder: (buildContext) => AlertDialog(
+    builder: (buildContext) {
+      const sizedBox = SizedBox(height: 8,);
+      return AlertDialog(
       title: const Text("Control Panel"),
       content: SingleChildScrollView(
         child: Column(
@@ -33,18 +38,45 @@ showControlPanel(BuildContext context) {
               controller: selectionDirectoryTxtCtrl,
               readOnly: true,
             ),
+            sizedBox,
             TextField(
-              decoration: const InputDecoration(label: Text("Keep folder name")),
+              decoration: const InputDecoration(
+                label: Text("Keep folder name"),
+              ),
               controller: keepFolderTxtCtrl,
             ),
+            sizedBox,
             TextField(
-              decoration: const InputDecoration(label: Text("Favorite folder name")),
+              decoration: const InputDecoration(
+                label: Text("Favorite folder name"),
+              ),
               controller: favoriteFolderTxtCtrl,
             ),
+            sizedBox,
             TextField(
-              decoration: const InputDecoration(label: Text("Delete folder name")),
+              decoration: const InputDecoration(
+                label: Text("Delete folder name"),
+              ),
               controller: deleteFolderTxtCtrl,
             ),
+            sizedBox,
+            (Platform.isAndroid || Platform.isIOS)
+                ? Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ElevatedButton(
+                          onPressed: (() {
+                            SystemChrome.setEnabledSystemUIMode(
+                                SystemUiMode.immersive);
+                          }),
+                          child: const Text("Toggle fullscreen"),
+                        ),
+                      ),
+                      sizedBox
+                    ],
+                  )
+                : Container()
           ],
         ),
       ),
@@ -66,7 +98,8 @@ showControlPanel(BuildContext context) {
           child: const Text("Ok"),
         ),
       ],
-    ),
+    );
+    },
   );
 }
 

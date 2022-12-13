@@ -16,18 +16,16 @@ class SelectorView extends StatefulWidget {
 
 class _SelectorViewState extends State<SelectorView> {
   late final Unlisten _unlistenSubjectChanged;
-  late final PhotoViewController _photoController;
-  late final OverlayEntry? _overlayEntry;
-
+  late final PhotoViewController _photoController = PhotoViewController();
+  late final OverlayEntry _overlayEntry = OverlayEntry(builder: _optionsBuilder);
+ 
   @override
   void initState() {
-    _photoController =  PhotoViewController();
     _unlistenSubjectChanged = SelectorController.listenSubjectChanged(() {
       setState(() {
         curImage = SelectorController.subjectImageFile;
       });
     });
-    _overlayEntry = _getOptionsOverlay();
     super.initState();
   }
 
@@ -41,10 +39,10 @@ class _SelectorViewState extends State<SelectorView> {
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_overlayEntry!.mounted) {
-        _overlayEntry!.remove();
+      if (_overlayEntry.mounted) {
+        _overlayEntry.remove();
       }
-      Overlay.of(context)!.insert(_overlayEntry!);
+      Overlay.of(context)!.insert(_overlayEntry);
     });
     return curImage == null
         ? Center(
@@ -56,35 +54,50 @@ class _SelectorViewState extends State<SelectorView> {
               ),
             ),
           )
-        : _getViewer();
+        : _viewer;
   }
-  
+
   File? curImage;
 
-  Widget _getViewer() {
-    return Listener(
-      onPointerSignal: (event) {
-        if (event is PointerScrollEvent &&
-            RawKeyboard.instance.keysPressed
-                .contains(LogicalKeyboardKey.controlLeft)) {
-          _photoController.scale = (_photoController.scale ?? 1) - event.scrollDelta.dy / 200; 
-        }
-      },
-      child: PhotoView(
-        imageProvider: FileImage(curImage!),
-        controller: _photoController,
+  Widget get _viewer {
+    return GestureDetector(
+      child: Listener(
+        onPointerSignal: (event) {
+          if (event is PointerScrollEvent &&
+              RawKeyboard.instance.keysPressed
+                  .contains(LogicalKeyboardKey.controlLeft)) {
+            _photoController.scale =
+                (_photoController.scale ?? 1) - event.scrollDelta.dy / 200;
+          }
+        },
+        child: SizedBox(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height -
+                    optionsSize -
+                    kToolbarHeight -
+                    16,
+          child: PhotoView(
+            backgroundDecoration: const BoxDecoration(),
+            imageProvider: FileImage(curImage!),
+            controller: _photoController,
+          ),
+        ),
       ),
     );
   }
 
-  OverlayEntry _getOptionsOverlay() {
-    return OverlayEntry(builder: (context) {
-      final screenSize = MediaQuery.of(context).size;
-      return Positioned(
-        bottom: 0,
-        left: 0,
-        right: 0,
-        child: Center(
+  get optionsSize => min(
+    max(MediaQuery.of(context).size.height / 8, 72.0),
+    MediaQuery.of(context).size.width / 5,
+  );
+
+  Widget _optionsBuilder(context) {
+    return Positioned(
+      bottom: 0,
+      width: MediaQuery.of(context).size.width,
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.end,
@@ -93,21 +106,21 @@ class _SelectorViewState extends State<SelectorView> {
             children: [
               IconButton(
                 icon: const Icon(Icons.cancel_sharp),
-                iconSize: min(screenSize.width / 5, screenSize.height / 10),
+                iconSize: optionsSize,
                 onPressed: actionSelectDelete,
                 color: Theme.of(context).iconTheme.color?.withOpacity(0.75),
-                // color: const Color.fromARGB(198, 138, 0, 0),
+                // color: const Color.fromARGB(198, 138, x0, 0),
               ),
               IconButton(
                 icon: const Icon(Icons.stars_sharp),
-                iconSize: min(screenSize.width / 4, screenSize.height / 8),
+                iconSize: optionsSize,
                 onPressed: actionSelectFavorite,
                 color: Theme.of(context).iconTheme.color?.withOpacity(0.75),
                 // color: const Color.fromARGB(198, 238, 188, 29),
               ),
               IconButton(
                 icon: const Icon(Icons.check_circle_sharp),
-                iconSize: min(screenSize.width / 5, screenSize.height / 10),
+                iconSize: optionsSize,
                 onPressed: actionSelectKeep,
                 color: Theme.of(context).iconTheme.color?.withOpacity(0.75),
                 // color: const Color.fromARGB(198, 0, 138, 0),
@@ -115,19 +128,22 @@ class _SelectorViewState extends State<SelectorView> {
             ],
           ),
         ),
-      );
-    });
+      ),
+    );
   }
 
   void actionSelectKeep() {
-    SelectorController.selectSubjectImageDestination(SelectorController.keepDestination);
+    SelectorController.selectSubjectImageDestination(
+        SelectorController.keepDestination);
   }
 
   void actionSelectFavorite() {
-    SelectorController.selectSubjectImageDestination(SelectorController.favoriteDestination);
+    SelectorController.selectSubjectImageDestination(
+        SelectorController.favoriteDestination);
   }
 
   void actionSelectDelete() {
-    SelectorController.selectSubjectImageDestination(SelectorController.deleteDestination);
+    SelectorController.selectSubjectImageDestination(
+        SelectorController.deleteDestination);
   }
 }
