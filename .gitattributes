@@ -1,0 +1,2 @@
+*.cpp linguist-detectable=false
+*.cc linguist-detectable=false
