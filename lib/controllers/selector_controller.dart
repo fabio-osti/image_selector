@@ -48,6 +48,9 @@ class SelectorController {
   static final MutableListenable<int> _subjectImageFileIndex =
       MutableListenable<int>(0);
 
+  static MutableListenable<SelectorPosition> selectorPosition = 
+      MutableListenable<SelectorPosition>(SelectorPosition.bottom);
+
   static File? get subjectImageFile =>
       imageFileQueue.value[_subjectImageFileIndex.value];
 
@@ -80,6 +83,14 @@ class SelectorController {
   static Unlisten listenQueueChanged(Function() listener) {
     return imageFileQueue.listen(listener);
   }
+
+  static Unlisten listenPositionChanged(Function() listener) {
+    return selectorPosition.listen(listener);
+  }
 }
 
 const imageExtensions = [".jpg", ".jpeg", ".png"];
+
+enum SelectorPosition {
+  bottom, right, none
+}

@@ -18,89 +18,164 @@ showControlPanel(BuildContext context) {
   showDialog(
     context: context,
     builder: (buildContext) {
-      const sizedBox = SizedBox(height: 8,);
+      const sizedBox = SizedBox(
+        height: 8,
+      );
       return AlertDialog(
-      title: const Text("Control Panel"),
-      content: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              decoration: InputDecoration(
-                label: const Text("Selection directory"),
-                suffixIcon: IconButton(
-                  onPressed: () {
-                    _chooseFolder(selectionDirectoryTxtCtrl);
-                  },
-                  icon: const Icon(Icons.folder),
+        title: const Text("Control Panel"),
+        content: SingleChildScrollView(
+          child: SizedBox(width: 400,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  decoration: InputDecoration(
+                    label: const Text("Selection directory"),
+                    suffixIcon: IconButton(
+                      onPressed: () {
+                        _chooseFolder(selectionDirectoryTxtCtrl);
+                      },
+                      icon: const Icon(Icons.folder),
+                    ),
+                  ),
+                  controller: selectionDirectoryTxtCtrl,
+                  readOnly: true,
                 ),
-              ),
-              controller: selectionDirectoryTxtCtrl,
-              readOnly: true,
+                sizedBox,
+                TextField(
+                  decoration: const InputDecoration(
+                    label: Text("Keep folder name"),
+                  ),
+                  controller: keepFolderTxtCtrl,
+                ),
+                sizedBox,
+                TextField(
+                  decoration: const InputDecoration(
+                    label: Text("Favorite folder name"),
+                  ),
+                  controller: favoriteFolderTxtCtrl,
+                ),
+                sizedBox,
+                TextField(
+                  decoration: const InputDecoration(
+                    label: Text("Delete folder name"),
+                  ),
+                  controller: deleteFolderTxtCtrl,
+                ),
+                sizedBox,
+                const PositionDropdown(),
+                // DropdownMenu(
+                //   inputDecorationTheme: const InputDecorationTheme(),
+                //   textStyle: const TextStyle(),
+                //   menuStyle: const MenuStyle(),
+                //   width: 400,
+                //   dropdownMenuEntries: const [
+                //     DropdownMenuEntry(
+                //       value: SelectorPosition.bottom,
+                //       label:"Bottom",
+                //     ),
+                //     DropdownMenuEntry(
+                //       value: SelectorPosition.right,
+                //       label:"Right",
+                //     ),
+                //     DropdownMenuEntry(
+                //       value: SelectorPosition.none,
+                //       label:"None",
+                //     )
+                //   ],
+                //   label: const Text("Options postion"),
+                //   initialSelection: SelectorController.selectorPosition.value,
+                //   onSelected: (SelectorPosition? pos) {
+                //     SelectorController.selectorPosition.value =
+                //         pos ?? SelectorPosition.bottom;
+                //   },
+                // ),
+                sizedBox,
+                (Platform.isAndroid || Platform.isIOS)
+                    ? Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: ElevatedButton(
+                              onPressed: (() {
+                                SystemChrome.setEnabledSystemUIMode(
+                                    SystemUiMode.immersive);
+                              }),
+                              child: const Text("Toggle fullscreen"),
+                            ),
+                          ),
+                          sizedBox
+                        ],
+                      )
+                    : Container()
+              ],
             ),
-            sizedBox,
-            TextField(
-              decoration: const InputDecoration(
-                label: Text("Keep folder name"),
-              ),
-              controller: keepFolderTxtCtrl,
-            ),
-            sizedBox,
-            TextField(
-              decoration: const InputDecoration(
-                label: Text("Favorite folder name"),
-              ),
-              controller: favoriteFolderTxtCtrl,
-            ),
-            sizedBox,
-            TextField(
-              decoration: const InputDecoration(
-                label: Text("Delete folder name"),
-              ),
-              controller: deleteFolderTxtCtrl,
-            ),
-            sizedBox,
-            (Platform.isAndroid || Platform.isIOS)
-                ? Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ElevatedButton(
-                          onPressed: (() {
-                            SystemChrome.setEnabledSystemUIMode(
-                                SystemUiMode.immersive);
-                          }),
-                          child: const Text("Toggle fullscreen"),
-                        ),
-                      ),
-                      sizedBox
-                    ],
-                  )
-                : Container()
-          ],
+          ),
         ),
-      ),
-      actions: [
-        ElevatedButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          child: const Text("Cancel"),
-        ),
-        ElevatedButton(
-          onPressed: () {
-            SelectorController.keepDestination = keepFolderTxtCtrl.text;
-            SelectorController.favoriteDestination = favoriteFolderTxtCtrl.text;
-            SelectorController.deleteDestination = deleteFolderTxtCtrl.text;
-            SelectorController.setDirectory(selectionDirectoryTxtCtrl.text);
-            Navigator.of(context).pop();
-          },
-          child: const Text("Ok"),
-        ),
-      ],
-    );
+        actions: [
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text("Cancel"),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              SelectorController.keepDestination = keepFolderTxtCtrl.text;
+              SelectorController.favoriteDestination =
+                  favoriteFolderTxtCtrl.text;
+              SelectorController.deleteDestination = deleteFolderTxtCtrl.text;
+              SelectorController.setDirectory(selectionDirectoryTxtCtrl.text);
+              Navigator.of(context).pop();
+            },
+            child: const Text("Ok"),
+          ),
+        ],
+      );
     },
   );
+}
+
+class PositionDropdown extends StatefulWidget {
+  const PositionDropdown({
+    super.key,
+  });
+
+  @override
+  State<PositionDropdown> createState() => _PositionDropdownState();
+}
+
+class _PositionDropdownState extends State<PositionDropdown> {
+  SelectorPosition _value = SelectorController.selectorPosition.value;
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButtonFormField(
+      decoration: const InputDecoration(label: Text("Options position")),
+      isExpanded: true,
+      items: const [
+        DropdownMenuItem(
+          value: SelectorPosition.bottom,
+          child: Text("Bottom"),
+        ),
+        DropdownMenuItem(
+          value: SelectorPosition.right,
+          child: Text("Right"),
+        ),
+        DropdownMenuItem(
+          value: SelectorPosition.none,
+          child: Text("None"),
+        )
+      ],
+      value: _value,
+      onChanged: (SelectorPosition? pos) {
+        SelectorController.selectorPosition.value =
+            pos ?? SelectorPosition.bottom;
+        setState(() {
+          _value = SelectorController.selectorPosition.value;
+        });
+      },
+    );
+  }
 }
 
 void _chooseFolder(TextEditingController controller) async {
