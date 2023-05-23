@@ -19,8 +19,11 @@ class _SelectorViewState extends State<SelectorView> {
   late final Unlisten _unlistenSubjectChanged;
   late final Unlisten _unlistenPositionChanged;
   late final PhotoViewController _photoController = PhotoViewController();
-  late final OverlayEntry _overlayEntry =
+  late final OverlayEntry _optionsOverlay =
       OverlayEntry(builder: _optionsBuilder);
+  late final OverlayEntry _undoOverlay = OverlayEntry(builder: _undoBuilder);
+
+  File? curImage;
 
   @override
   void initState() {
@@ -48,10 +51,14 @@ class _SelectorViewState extends State<SelectorView> {
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_overlayEntry.mounted) {
-        _overlayEntry.remove();
+      if (_optionsOverlay.mounted) {
+        _optionsOverlay.remove();
       }
-      Overlay.of(context).insert(_overlayEntry);
+      Overlay.of(context).insert(_optionsOverlay);
+      if (_undoOverlay.mounted) {
+        _undoOverlay.remove();
+      }
+      Overlay.of(context).insert(_undoOverlay);
     });
     return curImage == null
         ? Center(
@@ -66,7 +73,6 @@ class _SelectorViewState extends State<SelectorView> {
         : _viewer;
   }
 
-  File? curImage;
   SelectorPosition curPosition = SelectorController.selectorPosition.value;
 
   Widget get _viewer {
@@ -77,11 +83,11 @@ class _SelectorViewState extends State<SelectorView> {
           print(e.logicalKey);
         }
         if (e.logicalKey == LogicalKeyboardKey.arrowRight) {
-          actionSelectKeep();
+          SelectorController.actionSelectKeep();
         } else if (e.logicalKey == LogicalKeyboardKey.arrowUp) {
-          actionSelectFavorite();
+          SelectorController.actionSelectFavorite();
         } else if (e.logicalKey == LogicalKeyboardKey.arrowLeft) {
-          actionSelectDelete();
+          SelectorController.actionSelectDelete();
         } else {
           return KeyEventResult.handled;
         }
@@ -119,7 +125,42 @@ class _SelectorViewState extends State<SelectorView> {
         MediaQuery.of(context).size.width / 5,
       );
 
-  Widget _optionsBuilder(context) {
+  Widget _undoBuilder(BuildContext context) {
+    switch (curPosition) {
+      case SelectorPosition.bottom:
+        return Positioned(
+          bottom: 0,
+          left: 0,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: IconButton(
+              icon: const Icon(Icons.undo),
+              iconSize: _optionsSize,
+              onPressed: SelectorController.undo,
+              color: Theme.of(context).iconTheme.color?.withOpacity(0.75),
+            ),
+          ),
+        );
+      case SelectorPosition.right:
+        return Positioned(
+          bottom: 0,
+          right: 0,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: IconButton(
+              icon: const Icon(Icons.undo),
+              iconSize: _optionsSize,
+              onPressed: SelectorController.undo,
+              color: Theme.of(context).iconTheme.color?.withOpacity(0.75),
+            ),
+          ),
+        );
+      case SelectorPosition.none:
+        return Container();
+    }
+  }
+
+  Widget _optionsBuilder(BuildContext context) {
     switch (curPosition) {
       case SelectorPosition.bottom:
         return Positioned(
@@ -133,7 +174,7 @@ class _SelectorViewState extends State<SelectorView> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 verticalDirection: VerticalDirection.down,
                 mainAxisSize: MainAxisSize.max,
-                children: buttons,
+                children: _buttons,
               ),
             ),
           ),
@@ -148,9 +189,9 @@ class _SelectorViewState extends State<SelectorView> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.end,
-                verticalDirection: VerticalDirection.down,
+                verticalDirection: VerticalDirection.up,
                 mainAxisSize: MainAxisSize.max,
-                children: buttons,
+                children: _buttons,
               ),
             ),
           ),
@@ -160,44 +201,42 @@ class _SelectorViewState extends State<SelectorView> {
     }
   }
 
-  List<Widget> get buttons {
-    return [
-      IconButton(
-        icon: const Icon(Icons.cancel_sharp),
-        iconSize: _optionsSize,
-        onPressed: actionSelectDelete,
-        color: Theme.of(context).iconTheme.color?.withOpacity(0.75),
-        // color: const Color.fromARGB(198, 138, 0, 0),
-      ),
-      IconButton(
-        icon: const Icon(Icons.stars_sharp),
-        iconSize: _optionsSize,
-        onPressed: actionSelectFavorite,
-        color: Theme.of(context).iconTheme.color?.withOpacity(0.75),
-        // color: const Color.fromARGB(198, 238, 188, 29),
-      ),
-      IconButton(
-        icon: const Icon(Icons.check_circle_sharp),
-        iconSize: _optionsSize,
-        onPressed: actionSelectKeep,
-        color: Theme.of(context).iconTheme.color?.withOpacity(0.75),
-        // color: const Color.fromARGB(198, 0, 138, 0),
-      ),
-    ];
-  }
+  late final List<Widget> _buttons = [
+    IconButton(
+      icon: const Icon(Icons.cancel_sharp),
+      iconSize: _optionsSize,
+      onPressed: SelectorController.actionSelectDelete,
+      color: Theme.of(context).iconTheme.color?.withOpacity(0.75),
+      // color: const Color.fromARGB(198, 138, 0, 0),
+    ),
+    IconButton(
+      icon: const Icon(Icons.stars_sharp),
+      iconSize: _optionsSize,
+      onPressed: SelectorController.actionSelectFavorite,
+      color: Theme.of(context).iconTheme.color?.withOpacity(0.75),
+      // color: const Color.fromARGB(198, 238, 188, 29),
+    ),
+    IconButton(
+      icon: const Icon(Icons.check_circle_sharp),
+      iconSize: _optionsSize,
+      onPressed: SelectorController.actionSelectKeep,
+      color: Theme.of(context).iconTheme.color?.withOpacity(0.75),
+      // color: const Color.fromARGB(198, 0, 138, 0),
+    ),
+  ];
 
-  void actionSelectKeep() {
-    SelectorController.selectSubjectImageDestination(
-        SelectorController.keepDestination);
-  }
+  // void actionSelectKeep() {
+  //   SelectorController.selectSubjectImageDestination(
+  //       SelectorController.keepDestination);
+  // }
 
-  void actionSelectFavorite() {
-    SelectorController.selectSubjectImageDestination(
-        SelectorController.favoriteDestination);
-  }
+  // void actionSelectFavorite() {
+  //   SelectorController.selectSubjectImageDestination(
+  //       SelectorController.favoriteDestination);
+  // }
 
-  void actionSelectDelete() {
-    SelectorController.selectSubjectImageDestination(
-        SelectorController.deleteDestination);
-  }
+  // void actionSelectDelete() {
+  //   SelectorController.selectSubjectImageDestination(
+  //       SelectorController.deleteDestination);
+  // }
 }
