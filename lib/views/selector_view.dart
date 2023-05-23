@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:math';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -69,26 +70,44 @@ class _SelectorViewState extends State<SelectorView> {
   SelectorPosition curPosition = SelectorController.selectorPosition.value;
 
   Widget get _viewer {
-    return GestureDetector(
-      child: Listener(
-        onPointerSignal: (event) {
-          if (event is PointerScrollEvent &&
-              RawKeyboard.instance.keysPressed
-                  .contains(LogicalKeyboardKey.controlLeft)) {
-            _photoController.scale =
-                (_photoController.scale ?? 1) - event.scrollDelta.dy / 200;
-          }
-        },
-        child: SizedBox(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height -
-              _optionsSize -
-              kToolbarHeight -
-              16,
-          child: PhotoView(
-            backgroundDecoration: const BoxDecoration(),
-            imageProvider: FileImage(curImage!),
-            controller: _photoController,
+    return Focus(
+      onKey: (n, e) {
+        if (e is! RawKeyUpEvent) return KeyEventResult.handled;
+        if (kDebugMode) {
+          print(e.logicalKey);
+        }
+        if (e.logicalKey == LogicalKeyboardKey.arrowRight) {
+          actionSelectKeep();
+        } else if (e.logicalKey == LogicalKeyboardKey.arrowUp) {
+          actionSelectFavorite();
+        } else if (e.logicalKey == LogicalKeyboardKey.arrowLeft) {
+          actionSelectDelete();
+        } else {
+          return KeyEventResult.handled;
+        }
+        return KeyEventResult.ignored;
+      },
+      child: GestureDetector(
+        child: Listener(
+          onPointerSignal: (event) {
+            if (event is PointerScrollEvent &&
+                RawKeyboard.instance.keysPressed
+                    .contains(LogicalKeyboardKey.controlLeft)) {
+              _photoController.scale =
+                  (_photoController.scale ?? 1) - event.scrollDelta.dy / 200;
+            }
+          },
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height -
+                _optionsSize -
+                kToolbarHeight -
+                16,
+            child: PhotoView(
+              backgroundDecoration: const BoxDecoration(),
+              imageProvider: FileImage(curImage!),
+              controller: _photoController,
+            ),
           ),
         ),
       ),
