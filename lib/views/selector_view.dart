@@ -21,12 +21,9 @@ class _SelectorViewState extends State<SelectorView> {
   late final PhotoViewController _photoController = PhotoViewController();
   late final OverlayEntry _optionsOverlay =
       OverlayEntry(builder: _optionsBuilder);
-  final GlobalKey keepKey = GlobalKey();
-  final GlobalKey deleteKey = GlobalKey();
-  final GlobalKey favoriteKey = GlobalKey();
-  final GlobalKey undoKey = GlobalKey();
+
   File? get curImage => SelectorController.subjectImageFile;
-  SelectorPosition curPosition = SelectorController.selectorPosition.value;
+  SelectorPosition get curPosition => SelectorController.selectorPosition.value;
 
   @override
   void initState() {
@@ -37,7 +34,7 @@ class _SelectorViewState extends State<SelectorView> {
     });
     _unlistenPositionChanged = SelectorController.listenPositionChanged(() {
       setState(() {
-        curPosition = SelectorController.selectorPosition.value;
+        // curPosition = SelectorController.selectorPosition.value;
       });
     });
     super.initState();
@@ -98,22 +95,22 @@ class _SelectorViewState extends State<SelectorView> {
     return Focus(
       autofocus: true,
       onKey: (n, e) {
-        if (e.repeat) return KeyEventResult.handled;
+        if (e is! RawKeyUpEvent || e.repeat) return KeyEventResult.handled;
         if (kDebugMode) {
           print(e.logicalKey);
         }
         if (e.logicalKey == LogicalKeyboardKey.arrowRight ||
             e.logicalKey == LogicalKeyboardKey.keyD) {
-          shortcut(keepKey, e is! RawKeyUpEvent);
+          actionSelectKeep();
         } else if (e.logicalKey == LogicalKeyboardKey.arrowUp ||
             e.logicalKey == LogicalKeyboardKey.keyS) {
-          shortcut(favoriteKey, e is! RawKeyUpEvent);
+          actionSelectFavorite();
         } else if (e.logicalKey == LogicalKeyboardKey.arrowLeft ||
             e.logicalKey == LogicalKeyboardKey.keyA) {
-          shortcut(deleteKey, e is! RawKeyUpEvent);
+          actionSelectDelete();
         } else if (e.logicalKey == LogicalKeyboardKey.numpad0 ||
             e.logicalKey == LogicalKeyboardKey.space) {
-          shortcut(undoKey, e is! RawKeyUpEvent);
+          SelectorController.undo();
         } else {
           return KeyEventResult.handled;
         }
@@ -132,7 +129,7 @@ class _SelectorViewState extends State<SelectorView> {
           child: SizedBox(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height -
-                _optionsSize(context) -
+                (curPosition == SelectorPosition.none ? 0 : _optionsSize(context)) -
                 kToolbarHeight -
                 16,
             child: PhotoView(
@@ -148,39 +145,35 @@ class _SelectorViewState extends State<SelectorView> {
 
   double _optionsSize(BuildContext context) => min(
         max(MediaQuery.of(context).size.height / 8, 72.0),
-        MediaQuery.of(context).size.width / 5,
+        MediaQuery.of(context).size.width / 6,
       );
 
   Widget _optionsBuilder(BuildContext context) {
     final List<Widget> buttons = [
       IconButton(
-        key: undoKey,
         icon: const Icon(Icons.undo),
         iconSize: _optionsSize(context),
         onPressed: SelectorController.undo,
         color: Theme.of(context).iconTheme.color?.withOpacity(0.75),
       ),
       IconButton(
-        key: deleteKey,
         icon: const Icon(Icons.cancel_sharp),
         iconSize: _optionsSize(context),
-        onPressed: SelectorController.actionSelectDelete,
+        onPressed: actionSelectDelete,
         color: Theme.of(context).iconTheme.color?.withOpacity(0.75),
         // color: const Color.fromARGB(198, 138, 0, 0),
       ),
       IconButton(
-        key: favoriteKey,
         icon: const Icon(Icons.stars_sharp),
         iconSize: _optionsSize(context),
-        onPressed: SelectorController.actionSelectFavorite,
+        onPressed: actionSelectFavorite,
         color: Theme.of(context).iconTheme.color?.withOpacity(0.75),
         // color: const Color.fromARGB(198, 238, 188, 29),
       ),
       IconButton(
-        key: keepKey,
         icon: const Icon(Icons.check_circle_sharp),
         iconSize: _optionsSize(context),
-        onPressed: SelectorController.actionSelectKeep,
+        onPressed: actionSelectKeep,
         color: Theme.of(context).iconTheme.color?.withOpacity(0.75),
         // color: const Color.fromARGB(198, 0, 138, 0),
       ),
@@ -224,5 +217,20 @@ class _SelectorViewState extends State<SelectorView> {
       case SelectorPosition.none:
         return Container();
     }
+  }
+
+  static void actionSelectKeep() {
+    SelectorController.selectSubjectImageDestination(
+        SelectorController.keepDestination);
+  }
+
+  static void actionSelectFavorite() {
+    SelectorController.selectSubjectImageDestination(
+        SelectorController.favoriteDestination);
+  }
+
+  static void actionSelectDelete() {
+    SelectorController.selectSubjectImageDestination(
+        SelectorController.deleteDestination);
   }
 }

@@ -24,7 +24,8 @@ showControlPanel(BuildContext context) {
       return AlertDialog(
         title: const Text("Control Panel"),
         content: SingleChildScrollView(
-          child: SizedBox(width: 400,
+          child: SizedBox(
+            width: 400,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -64,32 +65,7 @@ showControlPanel(BuildContext context) {
                 ),
                 sizedBox,
                 const PositionDropdown(),
-                // DropdownMenu(
-                //   inputDecorationTheme: const InputDecorationTheme(),
-                //   textStyle: const TextStyle(),
-                //   menuStyle: const MenuStyle(),
-                //   width: 400,
-                //   dropdownMenuEntries: const [
-                //     DropdownMenuEntry(
-                //       value: SelectorPosition.bottom,
-                //       label:"Bottom",
-                //     ),
-                //     DropdownMenuEntry(
-                //       value: SelectorPosition.right,
-                //       label:"Right",
-                //     ),
-                //     DropdownMenuEntry(
-                //       value: SelectorPosition.none,
-                //       label:"None",
-                //     )
-                //   ],
-                //   label: const Text("Options postion"),
-                //   initialSelection: SelectorController.selectorPosition.value,
-                //   onSelected: (SelectorPosition? pos) {
-                //     SelectorController.selectorPosition.value =
-                //         pos ?? SelectorPosition.bottom;
-                //   },
-                // ),
+                //altDropdown(),
                 sizedBox,
                 (Platform.isAndroid || Platform.isIOS)
                     ? Column(
@@ -134,6 +110,35 @@ showControlPanel(BuildContext context) {
       );
     },
   );
+}
+
+DropdownMenu<SelectorPosition> altDropdown() {
+  return DropdownMenu(
+                inputDecorationTheme: const InputDecorationTheme(),
+                textStyle: const TextStyle(),
+                menuStyle: const MenuStyle(),
+                width: 400,
+                dropdownMenuEntries: const [
+                  DropdownMenuEntry(
+                    value: SelectorPosition.bottom,
+                    label:"Bottom",
+                  ),
+                  DropdownMenuEntry(
+                    value: SelectorPosition.right,
+                    label:"Right",
+                  ),
+                  DropdownMenuEntry(
+                    value: SelectorPosition.none,
+                    label:"None",
+                  )
+                ],
+                label: const Text("Options postion"),
+                initialSelection: SelectorController.selectorPosition.value,
+                onSelected: (SelectorPosition? pos) {
+                  SelectorController.selectorPosition.value =
+                      pos ?? SelectorPosition.bottom;
+                },
+              );
 }
 
 class PositionDropdown extends StatefulWidget {

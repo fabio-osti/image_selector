@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:math';
+import 'package:flutter/foundation.dart';
 import 'package:image_selector/helper/listenable.dart';
 import 'package:image_selector/helper/string_extension.dart';
 import 'package:path/path.dart' as p;
@@ -14,6 +15,9 @@ class SelectorController {
     if (path.isNullOrEmpty() && subjectsDir == null) return;
     if (!path.isNullOrEmpty()) {
       subjectsDir = Directory(path!);
+      if (kDebugMode) {
+        print(subjectsDir!.listSync());
+      }
     }
 
     final List<File> alreadyProcessed = List.empty(growable: true);
@@ -84,9 +88,7 @@ class SelectorController {
       _historyStack.add(copySync);
 
       imageFileQueue.value.removeAt(_subjectImageFileIndex.value);
-      // if (imageFileQueue.value.isEmpty) {
-      //   return;
-      // }
+
       _subjectImageFileIndex.value = max(
         min(_subjectImageFileIndex.value, imageFileQueue.value.length - 2),
         0,
@@ -112,21 +114,6 @@ class SelectorController {
 
   static Unlisten listenPositionChanged(Function() listener) {
     return selectorPosition.listen(listener);
-  }
-
-  static void actionSelectKeep() {
-    SelectorController.selectSubjectImageDestination(
-        SelectorController.keepDestination);
-  }
-
-  static void actionSelectFavorite() {
-    SelectorController.selectSubjectImageDestination(
-        SelectorController.favoriteDestination);
-  }
-
-  static void actionSelectDelete() {
-    SelectorController.selectSubjectImageDestination(
-        SelectorController.deleteDestination);
   }
 }
 
