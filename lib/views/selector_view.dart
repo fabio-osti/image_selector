@@ -21,15 +21,18 @@ class _SelectorViewState extends State<SelectorView> {
   late final PhotoViewController _photoController = PhotoViewController();
   late final OverlayEntry _optionsOverlay =
       OverlayEntry(builder: _optionsBuilder);
-  late final OverlayEntry _undoOverlay = OverlayEntry(builder: _undoBuilder);
-
-  File? curImage;
+  final GlobalKey keepKey = GlobalKey();
+  final GlobalKey deleteKey = GlobalKey();
+  final GlobalKey favoriteKey = GlobalKey();
+  final GlobalKey undoKey = GlobalKey();
+  File? get curImage => SelectorController.subjectImageFile;
+  SelectorPosition curPosition = SelectorController.selectorPosition.value;
 
   @override
   void initState() {
     _unlistenSubjectChanged = SelectorController.listenSubjectChanged(() {
       setState(() {
-        curImage = SelectorController.subjectImageFile;
+        // curImage = SelectorController.subjectImageFile;
       });
     });
     _unlistenPositionChanged = SelectorController.listenPositionChanged(() {
@@ -55,10 +58,6 @@ class _SelectorViewState extends State<SelectorView> {
         _optionsOverlay.remove();
       }
       Overlay.of(context).insert(_optionsOverlay);
-      if (_undoOverlay.mounted) {
-        _undoOverlay.remove();
-      }
-      Overlay.of(context).insert(_undoOverlay);
     });
     return curImage == null
         ? Center(
@@ -73,21 +72,48 @@ class _SelectorViewState extends State<SelectorView> {
         : _viewer;
   }
 
-  SelectorPosition curPosition = SelectorController.selectorPosition.value;
+  void shortcut(GlobalKey key, bool keyDown) async {
+    RenderBox renderbox = key.currentContext!.findRenderObject() as RenderBox;
+    Offset position = renderbox.localToGlobal(Offset.zero);
+    double x = position.dx;
+    double y = position.dy;
+
+    if (kDebugMode) {
+      print(x);
+      print(y);
+    }
+
+    if (keyDown) {
+      GestureBinding.instance.handlePointerEvent(PointerDownEvent(
+        position: Offset(x, y),
+      )); //trigger button up,
+    } else {
+      GestureBinding.instance.handlePointerEvent(PointerUpEvent(
+        position: Offset(x, y),
+      )); //trigger button down
+    }
+  }
 
   Widget get _viewer {
     return Focus(
+      autofocus: true,
       onKey: (n, e) {
-        if (e is! RawKeyUpEvent) return KeyEventResult.handled;
+        if (e.repeat) return KeyEventResult.handled;
         if (kDebugMode) {
           print(e.logicalKey);
         }
-        if (e.logicalKey == LogicalKeyboardKey.arrowRight) {
-          SelectorController.actionSelectKeep();
-        } else if (e.logicalKey == LogicalKeyboardKey.arrowUp) {
-          SelectorController.actionSelectFavorite();
-        } else if (e.logicalKey == LogicalKeyboardKey.arrowLeft) {
-          SelectorController.actionSelectDelete();
+        if (e.logicalKey == LogicalKeyboardKey.arrowRight ||
+            e.logicalKey == LogicalKeyboardKey.keyD) {
+          shortcut(keepKey, e is! RawKeyUpEvent);
+        } else if (e.logicalKey == LogicalKeyboardKey.arrowUp ||
+            e.logicalKey == LogicalKeyboardKey.keyS) {
+          shortcut(favoriteKey, e is! RawKeyUpEvent);
+        } else if (e.logicalKey == LogicalKeyboardKey.arrowLeft ||
+            e.logicalKey == LogicalKeyboardKey.keyA) {
+          shortcut(deleteKey, e is! RawKeyUpEvent);
+        } else if (e.logicalKey == LogicalKeyboardKey.numpad0 ||
+            e.logicalKey == LogicalKeyboardKey.space) {
+          shortcut(undoKey, e is! RawKeyUpEvent);
         } else {
           return KeyEventResult.handled;
         }
@@ -106,7 +132,7 @@ class _SelectorViewState extends State<SelectorView> {
           child: SizedBox(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height -
-                _optionsSize -
+                _optionsSize(context) -
                 kToolbarHeight -
                 16,
             child: PhotoView(
@@ -120,47 +146,46 @@ class _SelectorViewState extends State<SelectorView> {
     );
   }
 
-  double get _optionsSize => min(
+  double _optionsSize(BuildContext context) => min(
         max(MediaQuery.of(context).size.height / 8, 72.0),
         MediaQuery.of(context).size.width / 5,
       );
 
-  Widget _undoBuilder(BuildContext context) {
-    switch (curPosition) {
-      case SelectorPosition.bottom:
-        return Positioned(
-          bottom: 0,
-          left: 0,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: IconButton(
-              icon: const Icon(Icons.undo),
-              iconSize: _optionsSize,
-              onPressed: SelectorController.undo,
-              color: Theme.of(context).iconTheme.color?.withOpacity(0.75),
-            ),
-          ),
-        );
-      case SelectorPosition.right:
-        return Positioned(
-          bottom: 0,
-          right: 0,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: IconButton(
-              icon: const Icon(Icons.undo),
-              iconSize: _optionsSize,
-              onPressed: SelectorController.undo,
-              color: Theme.of(context).iconTheme.color?.withOpacity(0.75),
-            ),
-          ),
-        );
-      case SelectorPosition.none:
-        return Container();
-    }
-  }
-
   Widget _optionsBuilder(BuildContext context) {
+    final List<Widget> buttons = [
+      IconButton(
+        key: undoKey,
+        icon: const Icon(Icons.undo),
+        iconSize: _optionsSize(context),
+        onPressed: SelectorController.undo,
+        color: Theme.of(context).iconTheme.color?.withOpacity(0.75),
+      ),
+      IconButton(
+        key: deleteKey,
+        icon: const Icon(Icons.cancel_sharp),
+        iconSize: _optionsSize(context),
+        onPressed: SelectorController.actionSelectDelete,
+        color: Theme.of(context).iconTheme.color?.withOpacity(0.75),
+        // color: const Color.fromARGB(198, 138, 0, 0),
+      ),
+      IconButton(
+        key: favoriteKey,
+        icon: const Icon(Icons.stars_sharp),
+        iconSize: _optionsSize(context),
+        onPressed: SelectorController.actionSelectFavorite,
+        color: Theme.of(context).iconTheme.color?.withOpacity(0.75),
+        // color: const Color.fromARGB(198, 238, 188, 29),
+      ),
+      IconButton(
+        key: keepKey,
+        icon: const Icon(Icons.check_circle_sharp),
+        iconSize: _optionsSize(context),
+        onPressed: SelectorController.actionSelectKeep,
+        color: Theme.of(context).iconTheme.color?.withOpacity(0.75),
+        // color: const Color.fromARGB(198, 0, 138, 0),
+      ),
+    ];
+
     switch (curPosition) {
       case SelectorPosition.bottom:
         return Positioned(
@@ -174,7 +199,7 @@ class _SelectorViewState extends State<SelectorView> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 verticalDirection: VerticalDirection.down,
                 mainAxisSize: MainAxisSize.max,
-                children: _buttons,
+                children: buttons,
               ),
             ),
           ),
@@ -191,7 +216,7 @@ class _SelectorViewState extends State<SelectorView> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 verticalDirection: VerticalDirection.up,
                 mainAxisSize: MainAxisSize.max,
-                children: _buttons,
+                children: buttons,
               ),
             ),
           ),
@@ -200,43 +225,4 @@ class _SelectorViewState extends State<SelectorView> {
         return Container();
     }
   }
-
-  late final List<Widget> _buttons = [
-    IconButton(
-      icon: const Icon(Icons.cancel_sharp),
-      iconSize: _optionsSize,
-      onPressed: SelectorController.actionSelectDelete,
-      color: Theme.of(context).iconTheme.color?.withOpacity(0.75),
-      // color: const Color.fromARGB(198, 138, 0, 0),
-    ),
-    IconButton(
-      icon: const Icon(Icons.stars_sharp),
-      iconSize: _optionsSize,
-      onPressed: SelectorController.actionSelectFavorite,
-      color: Theme.of(context).iconTheme.color?.withOpacity(0.75),
-      // color: const Color.fromARGB(198, 238, 188, 29),
-    ),
-    IconButton(
-      icon: const Icon(Icons.check_circle_sharp),
-      iconSize: _optionsSize,
-      onPressed: SelectorController.actionSelectKeep,
-      color: Theme.of(context).iconTheme.color?.withOpacity(0.75),
-      // color: const Color.fromARGB(198, 0, 138, 0),
-    ),
-  ];
-
-  // void actionSelectKeep() {
-  //   SelectorController.selectSubjectImageDestination(
-  //       SelectorController.keepDestination);
-  // }
-
-  // void actionSelectFavorite() {
-  //   SelectorController.selectSubjectImageDestination(
-  //       SelectorController.favoriteDestination);
-  // }
-
-  // void actionSelectDelete() {
-  //   SelectorController.selectSubjectImageDestination(
-  //       SelectorController.deleteDestination);
-  // }
 }

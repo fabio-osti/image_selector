@@ -25,7 +25,7 @@ class ConveyorView extends StatelessWidget {
   }
 }
 
-class _ConveyorBox extends StatefulWidget {
+class _ConveyorBox extends StatelessWidget {
   const _ConveyorBox({
     Key? key,
     required this.imgFile,
@@ -34,38 +34,17 @@ class _ConveyorBox extends StatefulWidget {
   final File imgFile;
 
   @override
-  State<_ConveyorBox> createState() => _ConveyorBoxState();
-}
-
-class _ConveyorBoxState extends State<_ConveyorBox> {
-  late final FocusNode _focusNode;
-
-  @override
-  void initState() {
-    _focusNode = FocusNode();
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _focusNode.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: ElevatedButton(
-        focusNode: _focusNode,
         style: ElevatedButton.styleFrom(
           shape: const BeveledRectangleBorder(),
         ),
         onPressed: () {
-          SelectorController.setSubject(widget.imgFile);
-          _focusNode.requestFocus();
+          SelectorController.setSubject(imgFile);
         },
-        child: Image.file(widget.imgFile),
+        child: Image.file(imgFile),
       ),
     );
   }

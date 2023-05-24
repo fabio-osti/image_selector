@@ -11,7 +11,7 @@ class SelectorController {
   static Directory? subjectsDir;
 
   static setDirectory([String? path]) {
-    if (path == null && subjectsDir == null) return;
+    if (path.isNullOrEmpty() && subjectsDir == null) return;
     if (!path.isNullOrEmpty()) {
       subjectsDir = Directory(path!);
     }
@@ -59,8 +59,9 @@ class SelectorController {
   static MutableListenable<SelectorPosition> selectorPosition =
       MutableListenable<SelectorPosition>(SelectorPosition.bottom);
 
-  static File? get subjectImageFile =>
-      imageFileQueue.value[_subjectImageFileIndex.value];
+  static File? get subjectImageFile => imageFileQueue.value.isEmpty
+      ? null
+      : imageFileQueue.value[_subjectImageFileIndex.value];
 
   static setSubject(File sbj) {
     var indexOf = imageFileQueue.value.indexOf(sbj);
@@ -83,8 +84,13 @@ class SelectorController {
       _historyStack.add(copySync);
 
       imageFileQueue.value.removeAt(_subjectImageFileIndex.value);
-      _subjectImageFileIndex.value =
-          min(_subjectImageFileIndex.value, imageFileQueue.value.length - 2);
+      // if (imageFileQueue.value.isEmpty) {
+      //   return;
+      // }
+      _subjectImageFileIndex.value = max(
+        min(_subjectImageFileIndex.value, imageFileQueue.value.length - 2),
+        0,
+      );
     }
   }
 
