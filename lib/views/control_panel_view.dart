@@ -112,7 +112,7 @@ showControlPanel(BuildContext context) {
   );
 }
 
-DropdownMenu<SelectorPosition> altDropdown() {
+DropdownMenu<ButtonsPosition> altDropdown() {
   return DropdownMenu(
                 inputDecorationTheme: const InputDecorationTheme(),
                 textStyle: const TextStyle(),
@@ -120,23 +120,23 @@ DropdownMenu<SelectorPosition> altDropdown() {
                 width: 400,
                 dropdownMenuEntries: const [
                   DropdownMenuEntry(
-                    value: SelectorPosition.bottom,
+                    value: ButtonsPosition.bottom,
                     label:"Bottom",
                   ),
                   DropdownMenuEntry(
-                    value: SelectorPosition.right,
+                    value: ButtonsPosition.right,
                     label:"Right",
                   ),
                   DropdownMenuEntry(
-                    value: SelectorPosition.none,
+                    value: ButtonsPosition.none,
                     label:"None",
                   )
                 ],
                 label: const Text("Options postion"),
-                initialSelection: SelectorController.selectorPosition.value,
-                onSelected: (SelectorPosition? pos) {
-                  SelectorController.selectorPosition.value =
-                      pos ?? SelectorPosition.bottom;
+                initialSelection: SelectorController.buttonsPosition.value,
+                onSelected: (ButtonsPosition? pos) {
+                  SelectorController.buttonsPosition.value =
+                      pos ?? ButtonsPosition.bottom;
                 },
               );
 }
@@ -151,7 +151,7 @@ class PositionDropdown extends StatefulWidget {
 }
 
 class _PositionDropdownState extends State<PositionDropdown> {
-  SelectorPosition _value = SelectorController.selectorPosition.value;
+  ButtonsPosition _value = SelectorController.buttonsPosition.value;
   @override
   Widget build(BuildContext context) {
     return DropdownButtonFormField(
@@ -159,24 +159,24 @@ class _PositionDropdownState extends State<PositionDropdown> {
       isExpanded: true,
       items: const [
         DropdownMenuItem(
-          value: SelectorPosition.bottom,
+          value: ButtonsPosition.bottom,
           child: Text("Bottom"),
         ),
         DropdownMenuItem(
-          value: SelectorPosition.right,
+          value: ButtonsPosition.right,
           child: Text("Right"),
         ),
         DropdownMenuItem(
-          value: SelectorPosition.none,
+          value: ButtonsPosition.none,
           child: Text("None"),
         )
       ],
       value: _value,
-      onChanged: (SelectorPosition? pos) {
-        SelectorController.selectorPosition.value =
-            pos ?? SelectorPosition.bottom;
+      onChanged: (ButtonsPosition? pos) {
+        SelectorController.buttonsPosition.value =
+            pos ?? ButtonsPosition.bottom;
         setState(() {
-          _value = SelectorController.selectorPosition.value;
+          _value = SelectorController.buttonsPosition.value;
         });
       },
     );
