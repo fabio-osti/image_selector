@@ -81,29 +81,73 @@ class _SelectorViewState extends State<SelectorView> {
       },
       child: GestureDetector(
         child: Listener(
-            onPointerSignal: (event) {
-              if (event is PointerScrollEvent &&
-                  RawKeyboard.instance.keysPressed
-                      .contains(LogicalKeyboardKey.controlLeft)) {
-                _photoController.scale =
-                    (_photoController.scale ?? 1) - event.scrollDelta.dy / 200;
-              }
-            },
-            child: _viewerStack),
+          onPointerSignal: (event) {
+            if (event is PointerScrollEvent &&
+                RawKeyboard.instance.keysPressed
+                    .contains(LogicalKeyboardKey.controlLeft)) {
+              _photoController.scale =
+                  (_photoController.scale ?? 1) - event.scrollDelta.dy / 200;
+            }
+          },
+          child: _viewerStack,
+        ),
       ),
     );
+  }
+
+  List<Widget> _getButttons(double size) {
+    return [
+      IconButton(
+        icon: const Icon(Icons.undo),
+        iconSize: size,
+        onPressed: SelectorController.undo,
+        color: Theme.of(context).iconTheme.color?.withOpacity(0.75),
+      ),
+      IconButton(
+        icon: const Icon(Icons.cancel_sharp),
+        iconSize: size,
+        onPressed: actionSelectDelete,
+        color: Theme.of(context).iconTheme.color?.withOpacity(0.75),
+        // color: const Color.fromARGB(198, 138, 0, 0),
+      ),
+      IconButton(
+        icon: const Icon(Icons.stars_sharp),
+        iconSize: size,
+        onPressed: actionSelectFavorite,
+        color: Theme.of(context).iconTheme.color?.withOpacity(0.75),
+        // color: const Color.fromARGB(198, 238, 188, 29),
+      ),
+      IconButton(
+        icon: const Icon(Icons.check_circle_sharp),
+        iconSize: size,
+        onPressed: actionSelectKeep,
+        color: Theme.of(context).iconTheme.color?.withOpacity(0.75),
+        // color: const Color.fromARGB(198, 0, 138, 0),
+      ),
+    ];
   }
 
   Widget get _viewerStack {
     switch (SelectorController.buttonsPosition.value) {
       case ButtonsPosition.bottom:
+        final double buttonsSize = min(
+          128,
+          min(
+            max(MediaQuery.of(context).size.height / 9, 64),
+            MediaQuery.of(context).size.width / 6,
+          ),
+        );
+
+        final List<Widget> buttons = _getButttons(buttonsSize);
+
         return Column(
           children: [
             SizedBox(
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height -
-                  _buttonsSize(context) -
+                  buttonsSize -
                   kToolbarHeight -
+                  (Platform.isAndroid ? 24 : 0) -
                   32,
               child: PhotoView(
                 backgroundDecoration: const BoxDecoration(),
@@ -111,16 +155,36 @@ class _SelectorViewState extends State<SelectorView> {
                 controller: _photoController,
               ),
             ),
-            _getButtons(context)
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  verticalDirection: VerticalDirection.down,
+                  mainAxisSize: MainAxisSize.max,
+                  children: buttons,
+                ),
+              ),
+            )
           ],
         );
+
       case ButtonsPosition.right:
+        final double buttonsSize = min(
+          128,
+          min(
+            max(MediaQuery.of(context).size.width / 8, 72.0),
+            MediaQuery.of(context).size.height / 8,
+          ),
+        );
+
+        final List<Widget> buttons = _getButttons(buttonsSize);
+
         return Row(
           children: [
             SizedBox(
-              width: MediaQuery.of(context).size.width -
-                  _buttonsSize(context) -
-                  32,
+              width: MediaQuery.of(context).size.width - buttonsSize - 32,
               height: MediaQuery.of(context).size.height - kToolbarHeight - 32,
               child: PhotoView(
                 backgroundDecoration: const BoxDecoration(),
@@ -128,12 +192,24 @@ class _SelectorViewState extends State<SelectorView> {
                 controller: _photoController,
               ),
             ),
-            _getButtons(context)
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  verticalDirection: VerticalDirection.up,
+                  mainAxisSize: MainAxisSize.max,
+                  children: buttons,
+                ),
+              ),
+            )
           ],
         );
+
       case ButtonsPosition.none:
         return SizedBox(
-          width: MediaQuery.of(context).size.width - _buttonsSize(context) - 32,
+          width: MediaQuery.of(context).size.width - 32,
           height: MediaQuery.of(context).size.height - kToolbarHeight - 32,
           child: PhotoView(
             backgroundDecoration: const BoxDecoration(),
@@ -141,82 +217,6 @@ class _SelectorViewState extends State<SelectorView> {
             controller: _photoController,
           ),
         );
-    }
-  }
-
-  double _buttonsSize(BuildContext context) => min(
-        128,
-        SelectorController.buttonsPosition.value == ButtonsPosition.bottom
-            ? min(
-                max(MediaQuery.of(context).size.height / 8, 72.0),
-                MediaQuery.of(context).size.width / 6,
-              )
-            : min(
-                max(MediaQuery.of(context).size.width / 8, 72.0),
-                MediaQuery.of(context).size.height / 6,
-              ),
-      );
-
-  Widget _getButtons(BuildContext context) {
-    final List<Widget> buttons = [
-      IconButton(
-        icon: const Icon(Icons.undo),
-        iconSize: _buttonsSize(context),
-        onPressed: SelectorController.undo,
-        color: Theme.of(context).iconTheme.color?.withOpacity(0.75),
-      ),
-      IconButton(
-        icon: const Icon(Icons.cancel_sharp),
-        iconSize: _buttonsSize(context),
-        onPressed: actionSelectDelete,
-        color: Theme.of(context).iconTheme.color?.withOpacity(0.75),
-        // color: const Color.fromARGB(198, 138, 0, 0),
-      ),
-      IconButton(
-        icon: const Icon(Icons.stars_sharp),
-        iconSize: _buttonsSize(context),
-        onPressed: actionSelectFavorite,
-        color: Theme.of(context).iconTheme.color?.withOpacity(0.75),
-        // color: const Color.fromARGB(198, 238, 188, 29),
-      ),
-      IconButton(
-        icon: const Icon(Icons.check_circle_sharp),
-        iconSize: _buttonsSize(context),
-        onPressed: actionSelectKeep,
-        color: Theme.of(context).iconTheme.color?.withOpacity(0.75),
-        // color: const Color.fromARGB(198, 0, 138, 0),
-      ),
-    ];
-
-    switch (SelectorController.buttonsPosition.value) {
-      case ButtonsPosition.bottom:
-        return Center(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              verticalDirection: VerticalDirection.down,
-              mainAxisSize: MainAxisSize.max,
-              children: buttons,
-            ),
-          ),
-        );
-      case ButtonsPosition.right:
-        return Center(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              verticalDirection: VerticalDirection.up,
-              mainAxisSize: MainAxisSize.max,
-              children: buttons,
-            ),
-          ),
-        );
-      case ButtonsPosition.none:
-        return Container();
     }
   }
 
@@ -235,3 +235,5 @@ class _SelectorViewState extends State<SelectorView> {
         SelectorController.deleteDestination);
   }
 }
+
+// todo: put border around the picture and change the border color according to action chosen

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_selector/controllers/selector_controller.dart';
@@ -114,31 +115,30 @@ showControlPanel(BuildContext context) {
 
 DropdownMenu<ButtonsPosition> altDropdown() {
   return DropdownMenu(
-                inputDecorationTheme: const InputDecorationTheme(),
-                textStyle: const TextStyle(),
-                menuStyle: const MenuStyle(),
-                width: 400,
-                dropdownMenuEntries: const [
-                  DropdownMenuEntry(
-                    value: ButtonsPosition.bottom,
-                    label:"Bottom",
-                  ),
-                  DropdownMenuEntry(
-                    value: ButtonsPosition.right,
-                    label:"Right",
-                  ),
-                  DropdownMenuEntry(
-                    value: ButtonsPosition.none,
-                    label:"None",
-                  )
-                ],
-                label: const Text("Options postion"),
-                initialSelection: SelectorController.buttonsPosition.value,
-                onSelected: (ButtonsPosition? pos) {
-                  SelectorController.buttonsPosition.value =
-                      pos ?? ButtonsPosition.bottom;
-                },
-              );
+    inputDecorationTheme: const InputDecorationTheme(),
+    textStyle: const TextStyle(),
+    menuStyle: const MenuStyle(),
+    width: 400,
+    dropdownMenuEntries: const [
+      DropdownMenuEntry(
+        value: ButtonsPosition.bottom,
+        label: "Bottom",
+      ),
+      DropdownMenuEntry(
+        value: ButtonsPosition.right,
+        label: "Right",
+      ),
+      DropdownMenuEntry(
+        value: ButtonsPosition.none,
+        label: "None",
+      )
+    ],
+    label: const Text("Options postion"),
+    initialSelection: SelectorController.buttonsPosition.value,
+    onSelected: (ButtonsPosition? pos) {
+      SelectorController.buttonsPosition.value = pos ?? ButtonsPosition.bottom;
+    },
+  );
 }
 
 class PositionDropdown extends StatefulWidget {
