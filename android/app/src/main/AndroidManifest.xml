@@ -3,6 +3,8 @@
     package="com.example.image_selector">
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission
+        android:name="android.permission.READ_MEDIA_IMAGES" />
     <application
         android:label="Image Selector"
         android:name="${applicationName}"

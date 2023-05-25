@@ -184,10 +184,18 @@ class _PositionDropdownState extends State<PositionDropdown> {
 }
 
 void _chooseFolder(TextEditingController controller) async {
-  if (await Permission.storage.request().isGranted) {
-    String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
-    if (selectedDirectory != null) {
-      controller.text = selectedDirectory;
+  if (Platform.isAndroid) {
+    final osVer = int.parse(Platform.operatingSystemVersion.split(' ')[1]);
+    if (kDebugMode) {
+      print(osVer);
     }
+    if (!(osVer >= 13
+        ? await Permission.photos.request().isGranted
+        : await Permission.storage.request().isGranted)) return;
+  }
+  
+  String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
+  if (selectedDirectory != null) {
+    controller.text = selectedDirectory;
   }
 }
